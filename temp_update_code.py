@@ -4,6 +4,10 @@ import os
 import subprocess
 import glob
 import time
+# from https://pimylifeup.com/raspberry-pi-temperature-sensor/
+base_dir = '/sys/bus/w1/devices/'
+device_folder = glob.glob(base_dir + '28*')[0] #getting first device that starts with 28
+device_file = device_folder + '/w1_slave'
 
 def read_temp_raw():
     f = open(device_file, 'r')
