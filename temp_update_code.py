@@ -38,18 +38,19 @@ def changes_in_repo():
     os.chdir(REPO_DIR)
 
     if not os.path.isdir(REPO_DIR + os.sep + ".git"):
-      subprocess.call("git init".split())
-      with open(".gitignore", "w") as f:
-        f.write("*\n")
-      subprocess.call("git add -f .gitignore pending.data completed.data".split())
-      subprocess.call(["git", "commit", "-mInitial log"])
+        subprocess.call("git init".split())
+        with open(".gitignore", "w") as f:
+            f.write("*\n")
+        subprocess.call("git add -f .gitignore pending.data completed.data".split())
+        subprocess.call(["git", "commit", "-mInitial log"])
 
     if changes_in_repo():
-      subprocess.call("git commit -a".split() + ["-m" + c['args']])
+        subprocess.call("git commit -a".split() + ["-m" + c['args']])
 
-      # Only push every 2 minutes:
-      stdout, _ = subprocess.Popen("git log origin/master.. --oneline --before=2minutes".split(), stdout=subprocess.PIPE).communicate()
-      if stdout and False:
-      subprocess.call(["git", "push"])
+        # Only push every 2 minutes:
+        stdout, _ = subprocess.Popen("git log origin/master.. --oneline --before=2minutes".split(), stdout=subprocess.PIPE).communicate()
+        if stdout and False:
+            subprocess.call(["git", "push"])
 
 if __name__ == '__main__':
+    pass
