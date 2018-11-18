@@ -25,7 +25,7 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         temp_f = temp_c * 9.0 / 5.0 + 32.0
         return temp_c, temp_f
-# Lines[1] means we’re looking at the 2nd element in the array,
+# Lines[1] means we're looking at the 2nd element in the array,
 #in this case, the 2nd line. Once we have the line we simply
 #get all the numbers that are after the t= this is done here
 #lines[1][equals_pos+2:]. Equals_pos is the start position
