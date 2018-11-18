@@ -9,11 +9,13 @@ from gpiozero import CPUTemperature
 cpu = CPUTemperature()
 current_time = strftime("%a, %d %b %Y %H:%M:%S", localtime())
 
+def make_csv_line():
+    return ",".join([current_time, str(cpu.temperature), str(read_temp())])+"\n"
 
-def record_cpu_temp():
-	with open("cpu_temp.csv", 'a') as f:
-		f.write(str(current_time) +"\n")
-		f.write(str(cpu.temperature) +"\n")
+def append_csv():
+	with open("temp.csv", 'a') as f:
+		f.write(make_csv_line())
+
 # from https://pimylifeup.com/raspberry-pi-temperature-sensor/
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0] #getting first device that starts with 28
@@ -63,4 +65,4 @@ def changes_in_repo():
             subprocess.call(["git", "push"])
 
 if __name__ == '__main__':
-    pass
+    append_csv()
