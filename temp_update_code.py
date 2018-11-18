@@ -7,7 +7,7 @@ import time
 from gpiozero import CPUTemperature
 
 cpu = CPUTemperature()
-current_time = strftime("%a, %d %b %Y %H:%M:%S", localtime())
+current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
 
 def make_csv_line():
     return ",".join([current_time, str(cpu.temperature), str(read_temp())])+"\n"
