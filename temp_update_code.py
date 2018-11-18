@@ -4,6 +4,16 @@ import os
 import subprocess
 import glob
 import time
+from gpiozero import CPUTemperature
+
+cpu = CPUTemperature()
+current_time = strftime("%a, %d %b %Y %H:%M:%S", localtime())
+
+
+def record_cpu_temp():
+	with open("cpu_temp.csv", 'a') as f:
+		f.write(str(current_time) +"\n")
+		f.write(str(cpu.temperature) +"\n")
 # from https://pimylifeup.com/raspberry-pi-temperature-sensor/
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0] #getting first device that starts with 28
