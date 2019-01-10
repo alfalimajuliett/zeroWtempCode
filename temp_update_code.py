@@ -7,18 +7,11 @@ import time
 from gpiozero import CPUTemperature
 from crontab import CronTab
 
-empty_cron    = CronTab()
-my_user_cron  = CronTab(user=True)
-users_cron    = CronTab(user='username')
-
-system_cron = CronTab(tabfile='/etc/crontab', user=False)
-job = system_cron[0]
-job.user != None
-system_cron.new(command='new_command', user='root')
-
-job  = cron.new(command='/usr/bin/echo')#changes_in_repo
+cron = CronTab()
+job = cron.new(command = 'python temp_update_code.py')#calls changes_in_repo?
 job.hour.every(2)
 
+cron.write()
 ###python git code example####
 def changes_in_repo():
     return subprocess.call("git diff --exit-code --quiet".split()) != 0
