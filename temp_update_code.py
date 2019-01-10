@@ -5,6 +5,41 @@ import subprocess
 import glob
 import time
 from gpiozero import CPUTemperature
+from crontab import CronTab
+
+empty_cron    = CronTab()
+my_user_cron  = CronTab(user=True)
+users_cron    = CronTab(user='username')
+
+system_cron = CronTab(tabfile='/etc/crontab', user=False)
+job = system_cron[0]
+job.user != None
+system_cron.new(command='new_command', user='root')
+
+job  = cron.new(command='/usr/bin/echo')#changes_in_repo
+job.hour.every(2)
+
+###python git code example####
+def changes_in_repo():
+    return subprocess.call("git diff --exit-code --quiet".split()) != 0
+
+os.chdir(REPO_DIR)
+
+if not os.path.isdir(REPO_DIR + os.sep + ".git"):
+  subprocess.call("git init".split())
+  with open(".gitignore", "w") as f:
+    f.write("*\n")
+  subprocess.call("git add -f .gitignore pending.data completed.data".split())
+  subprocess.call(["git", "commit", "-mInitial log"])
+
+if changes_in_repo():
+  subprocess.call("git commit -a".split() + ["-m" + c['args']])
+
+  # Only push every 2 minutes:
+  stdout, _ = subprocess.Popen("git log origin/master.. --oneline --before=2minutes".split(), stdout=subprocess.PIPE).communicate()
+  if stdout and False:
+      subprocess.call(["git", "push"])
+###python git code example###
 
 cpu = CPUTemperature()
 current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
