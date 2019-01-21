@@ -1,37 +1,44 @@
 #!/usr/bin/env python
-
+#python will ignore this ^ but the shell will not
 import os
 import subprocess
 import glob
 import time
 from gpiozero import CPUTemperature
 from crontab import CronTab
+from contextlib import contextmanager
 
-cron = CronTab()
-job = cron.new(command = 'python temp_update_code.py')#calls changes_in_repo?
-job.hour.every(2)
+CODE_REPO = os.path.dirname(os.path.abspath(__file__))
+DATA_REPO = os.path.join(os.path.dirname(CODE_REPO),"QlabTempData")
 
-cron.write()
+def install():
+    cron = CronTab()
+    job = cron.new(command = os.path.abspath(__file__))#magic operator for getting the path of the current file
+    job.hour.every(2)
+    cron.write()
+
 ###python git code example####
-def changes_in_repo():
-    return subprocess.call("git diff --exit-code --quiet".split()) != 0
 
-os.chdir(REPO_DIR)
+def run_command(command):
+    subprocess.call(command.split())
 
-if not os.path.isdir(REPO_DIR + os.sep + ".git"):
-  subprocess.call("git init".split())
-  with open(".gitignore", "w") as f:
-    f.write("*\n")
-  subprocess.call("git add -f .gitignore pending.data completed.data".split())
-  subprocess.call(["git", "commit", "-mInitial log"])
+def git_commit(git_repo):
+    run_command("GIT_DIR="+ git_repo +" git commit -am 'Update data'")
 
-if changes_in_repo():
-  subprocess.call("git commit -a".split() + ["-m" + c['args']])
+def git_pull(git_repo):
+    run_command("GIT_DIR="+ git_repo +" git pull")
 
-  # Only push every 2 minutes:
-  stdout, _ = subprocess.Popen("git log origin/master.. --oneline --before=2minutes".split(), stdout=subprocess.PIPE).communicate()
-  if stdout and False:
-      subprocess.call(["git", "push"])
+def git_push(git_repo):   
+    run_command("GIT_DIR="+ git_repo +" git push")
+ 
+def update_code():
+    git_pull(CODE_REPO) # what happens if the code changes?
+
+def update_data():
+    append_csv()
+    git_commit(DATA_REPO)
+    git_push(DATA_REPO)
+
 ###python git code example###
 
 cpu = CPUTemperature()
@@ -41,7 +48,7 @@ def make_csv_line():
     return ",".join([current_time, str(cpu.temperature), str(read_temp())])+"\n"
 
 def append_csv():
-	with open("temp.csv", 'a') as f:
+	with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
 		f.write(make_csv_line())
 
 # from https://pimylifeup.com/raspberry-pi-temperature-sensor/
@@ -72,25 +79,12 @@ def read_temp():
 #of the temperature (t), and we add 2 to the position, so
 #we only get the actual temperature numbers.
 
-def changes_in_repo():
-    return subprocess.call("git diff --exit-code --quiet".split()) != 0
-
-    os.chdir(REPO_DIR)
-
-    if not os.path.isdir(REPO_DIR + os.sep + ".git"):
-        subprocess.call("git init".split())
-        with open(".gitignore", "w") as f:
-            f.write("*\n")
-        subprocess.call("git add -f .gitignore pending.data completed.data".split())
-        subprocess.call(["git", "commit", "-mInitial log"])
-
-    if changes_in_repo():
-        subprocess.call("git commit -a".split() + ["-m" + c['args']])
-
-        # Only push every 2 minutes:
-        stdout, _ = subprocess.Popen("git log origin/master.. --oneline --before=2minutes".split(), stdout=subprocess.PIPE).communicate()
-        if stdout and False:
-            subprocess.call(["git", "push"])
+def main():
+    if os.environ["install_temp_cron"] == "True":
+        install()
+    update_data()
+    update_code()
+    notify_healthcheck()
 
 if __name__ == '__main__':
-    append_csv()
+    main()
