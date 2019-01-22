@@ -1,2 +1,2 @@
-# zeroWtempCode
-code for raspberry pi zero W temperature probe project
+# QlabTempData
+Temperature data collected from growth chambers using zero W temp code
