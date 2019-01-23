@@ -14,7 +14,7 @@ DATA_REPO = os.path.join(os.path.dirname(CODE_REPO),"QlabTempData")
 def install():
     cron = CronTab(user=True)
     job = cron.new(command = os.path.abspath(__file__))#magic operator for getting the path of the current file
-    job.hour.every(2)
+    job.minute.every(60)
     cron.write()
 
 ###python git code example####
