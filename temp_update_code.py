@@ -7,6 +7,8 @@ import time
 from gpiozero import CPUTemperature
 from crontab import CronTab
 from contextlib import contextmanager
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+import ruuvitag_sensor.log
 
 CODE_REPO = os.path.dirname(os.path.abspath(__file__))
 DATA_REPO = os.path.join(os.path.dirname(CODE_REPO),"QlabTempData")
@@ -50,6 +52,40 @@ def make_csv_line():
 def append_csv():
 	with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
 		f.write(make_csv_line())
+
+#########added MAY 30########
+# from https://www.instructables.com/id/RuuviTag-and-PiZero-W-And-Blinkt/
+# Reading data from the RuuviTag
+ruuvitag_sensor.log.enable_console()
+
+RuuviTagSensor.find_ruuvitags()
+
+# List of macs of sensors which data will be collected
+# If list is empty, data will be collected for all found sensors
+macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+# get_data_for_sensors will look data for the duration of timeout_in_sec
+timeout_in_sec = 10
+
+datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+
+# Dictionary will have lates data for each sensor
+print(datas['AA:2C:6A:1E:59:3D'])
+print(datas['CC:2C:6A:1E:59:3D'])
+mac = 'EC:6D:59:6D:01:1C' # Change to your own device's mac-address
+
+sensor = RuuviTagSensor(mac)
+
+for i in macs:
+    sensor = macs[i]
+    data = sensor.update()
+
+    line_sen = str.format('Sensor - {0}', mac)
+    line_tem = str.format('Temperature: {0} C', data['temperature'])
+    line_hum = str.format('Humidity:    {0} %', data['humidity'])
+    line_pre = str.format('Pressure:    {0}', data['pressure'])
+
+    print()
+#################
 
 # from https://pimylifeup.com/raspberry-pi-temperature-sensor/
 base_dir = '/sys/bus/w1/devices/'
