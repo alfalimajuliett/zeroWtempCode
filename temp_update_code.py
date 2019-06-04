@@ -14,32 +14,34 @@ CODE_REPO = os.path.dirname(os.path.abspath(__file__))
 DATA_REPO = os.path.join(os.path.dirname(CODE_REPO),"QlabTempData")
 
 def install():
-    cron = CronTab()
+    cron = CronTab(user=True)
     job = cron.new(command = os.path.abspath(__file__))#magic operator for getting the path of the current file
-    job.hour.every(2)
+    job.minute.every(60)
     cron.write()
 
 ###python git code example####
 
 def run_command(command):
-    subprocess.call(command.split())
+    subprocess.call(command, shell=True)
 
-def git_commit(git_repo):
-    run_command("GIT_DIR="+ git_repo +" git commit -am 'Update data'")
+def git_commit():
+    run_command("/usr/bin/git commit -am 'Update data'")
 
-def git_pull(git_repo):
-    run_command("GIT_DIR="+ git_repo +" git pull")
+def git_pull():
+    run_command("/usr/bin/git pull")
 
-def git_push(git_repo):   
-    run_command("GIT_DIR="+ git_repo +" git push")
- 
+def git_push():
+    run_command("/usr/bin/git push")
+     
 def update_code():
-    git_pull(CODE_REPO) # what happens if the code changes?
+    os.chdir(CODE_REPO)
+    git_pull() # what happens if the code changes?
 
 def update_data():
-    append_csv()
-    git_commit(DATA_REPO)
-    git_push(DATA_REPO)
+    append_csv()
+    os.chdir(DATA_REPO)
+    git_commit()
+    git_push()
 
 ###python git code example###
 
@@ -50,8 +52,8 @@ def make_csv_line():
     return ",".join([current_time, str(cpu.temperature), str(read_temp())])+"\n"
 
 def append_csv():
-	with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
-		f.write(make_csv_line())
+    with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
+        f.write(make_csv_line())
 
 #########added MAY 30########
 # from https://www.instructables.com/id/RuuviTag-and-PiZero-W-And-Blinkt/
@@ -116,11 +118,11 @@ def read_temp():
 #we only get the actual temperature numbers.
 
 def main():
-    if os.environ["install_temp_cron"] == "True":
+    if os.getenv("install_temp_cron") == "True":
         install()
-    update_data()
-    update_code()
-    notify_healthcheck()
+    update_data()
+    update_code()
+    #notify_healthcheck()
 
 if __name__ == '__main__':
     main()
