@@ -13,7 +13,7 @@ On a clean installation of Rasbian Desktop:
 ```
 git clone git@github.com:alfalimajuliett/zeroWtempCode.git
 git clone git@github.com:alfalimajuliett/QlabTempData.git
-cd zeroWtempCode
+
 ```
 4. From https://pimylifeup.com/raspberry-pi-temperature-sensor/
 - `sudo nano /boot/config.txt` and add `dtoverlay=w1-gpio` to the bottom of the file
@@ -21,6 +21,7 @@ cd zeroWtempCode
 - `sudo reboot`
 - Wait ...
 - `sudo modprobe w1-gpio; sudo modprobe w1-therm`
-5. Run `./temp_update_code.py` and verify that the CSV is updated
-6. `pip install python-crontab`
-7. Run `install_temp_cron=True ./temp_update_code.py` to install a cron configuration to run the program every hour
+5. Run `git config --global user.email patt0335@umn.edu; git config --global user.name "Mary"`
+6. Run `cd zeroWtempCode; ./temp_update_code.py` and verify that the CSV is updated; `cat ../QlabTempData/temp.csv`
+7. `pip install python-crontab`
+8. Run `install_temp_cron=True ./temp_update_code.py` to install a cron configuration to run the program every hour

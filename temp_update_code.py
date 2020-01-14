@@ -44,7 +44,8 @@ def update_data():
 current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
 
 def make_csv_line():
-    return ",".join([current_time, str(read_temp())])+"\n"
+    temp_c, temp_f = read_temp()
+    return ",".join([current_time, str(temp_c), str(temp_f)])+"\n"
 
 def append_csv():
     with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
