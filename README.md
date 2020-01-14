@@ -13,6 +13,8 @@ On a clean installation of Rasbian Desktop:
 ```
 git clone git@github.com:alfalimajuliett/zeroWtempCode.git
 git clone git@github.com:alfalimajuliett/QlabTempData.git
+cd zeroWtempCode
 ```
 4. Run `./temp_update_code.py` and verify that the CSV is updated
-5. Run `install_temp_cron=True ./temp_update_code.py` to install a cron configuration to run the program every hour
+5. `pip install python-crontab`
+6. Run `install_temp_cron=True ./temp_update_code.py` to install a cron configuration to run the program every hour
