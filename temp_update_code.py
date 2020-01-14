@@ -4,7 +4,6 @@ import os
 import subprocess
 import glob
 import time
-from gpiozero import CPUTemperature
 from crontab import CronTab
 
 CODE_REPO = os.path.dirname(os.path.abspath(__file__))
@@ -42,11 +41,10 @@ def update_data():
 
 ###python git code example###
 
-cpu = CPUTemperature()
 current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
 
 def make_csv_line():
-    return ",".join([current_time, str(cpu.temperature), str(read_temp())])+"\n"
+    return ",".join([current_time, str(read_temp())])+"\n"
 
 def append_csv():
     with open(os.path.join(DATA_REPO,"temp.csv"), 'a') as f:
